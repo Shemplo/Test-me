@@ -1,6 +1,6 @@
 # 📋 Test me
 
-This is applications that loads questions in _JSON_ format and then randomly asks user to answer for some selected question in test format. For example, it can be helpful when you are preparing for exam in University or just started to learn something.
+This is applications that loads questions in _JSON_ format and then randomly asks user to answer for some selected question in test format. For example, it can be helpful when you are preparing for exam in University or just started to learn something new.
 
 ### Format of `questions.json` file
 
@@ -16,7 +16,7 @@ File must match such format:
 
 Formats of question objects:
 
-* One correct options
+* One correct option
 
 ```json
 {
