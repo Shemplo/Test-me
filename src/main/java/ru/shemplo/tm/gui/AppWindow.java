@@ -6,6 +6,7 @@ import java.util.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -15,6 +16,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.shemplo.tm.RunTestMe;
@@ -23,6 +25,7 @@ import ru.shemplo.tm.loader.QuestionsLoader;
 
 public class AppWindow extends Application {
 
+    public static final String STATISTICS_FORMAT = "Session: %d questions, %d correct (%d%%)";
     public static final String TITLE_FORMAT = "Test me ( v0.0.1 ) | %s";
     
     private final InputStream iconIS = AppWindow.class
@@ -50,8 +53,8 @@ public class AppWindow extends Application {
 	    this.stage.show ();
 	}
 	
+	private Label commentLabel, statisticsLabel;
 	private TextArea questionContent;
-	private Label commentLabel;
 	private VBox optionsBox;
 	
 	private Button checkButton, nextQuestionButton;
@@ -75,6 +78,7 @@ public class AppWindow extends Application {
 	    mainContainer.getChildren ().add (commentLabel);
 	    
 	    final HBox buttonsLine = new HBox (8);
+	    buttonsLine.setAlignment (Pos.CENTER_LEFT);
 	    mainContainer.getChildren ().add (buttonsLine);
 	    
 	    checkButton = new Button ("Check answer");
@@ -117,7 +121,15 @@ public class AppWindow extends Application {
 	            });
 	        }
 	        
+	        if (!isError) {
+	            correctAnswers++;
+	        }
+	        
 	        Platform.runLater (() -> {
+	            statisticsLabel.setText (String.format (STATISTICS_FORMAT, 
+                    (int) totalQuestions, (int) correctAnswers, 
+                    (int) (correctAnswers / totalQuestions * 100)
+                ));
 	            nextQuestionButton.setDisable (false);
 	            checkButton.setDisable (true);
 	        });
@@ -130,6 +142,13 @@ public class AppWindow extends Application {
 	    });
 	    buttonsLine.getChildren ().add (nextQuestionButton);
 	    
+	    final HBox wideBox = new HBox ();
+	    HBox.setHgrow (wideBox, Priority.ALWAYS);
+	    buttonsLine.getChildren ().add (wideBox);
+	    
+	    statisticsLabel = new Label (String.format (STATISTICS_FORMAT, 0, 0, 100));
+	    buttonsLine.getChildren ().add (statisticsLabel);
+	    
 	    return mainContainer;
 	}
 	
@@ -140,6 +159,8 @@ public class AppWindow extends Application {
 	private final Queue <Integer> uniqueQueue = new LinkedList <> ();
 	private final Set <Integer> uniquePool = new HashSet <> ();
 	
+	private double totalQuestions = 0, correctAnswers = 0;
+	
 	private void nextQuestion () {
 	    int r = questionIndex;
 	    do {	        
@@ -147,6 +168,7 @@ public class AppWindow extends Application {
 	    } while (uniquePool.contains (r));
 	    
 	    Question question = questionsLoader.getQuestions ().get (questionIndex = r);
+	    totalQuestions++;
 	    
 	    uniqueQueue.add (questionIndex);
 	    uniquePool.add (questionIndex);
