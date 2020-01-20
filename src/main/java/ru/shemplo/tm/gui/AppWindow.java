@@ -1,5 +1,6 @@
 package ru.shemplo.tm.gui;
 
+import java.io.InputStream;
 import java.util.*;
 
 import javafx.application.Application;
@@ -12,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -21,6 +23,11 @@ import ru.shemplo.tm.loader.QuestionsLoader;
 
 public class AppWindow extends Application {
 
+    public static final String TITLE_FORMAT = "Test me ( v0.0.1 ) | %s";
+    
+    private final InputStream iconIS = AppWindow.class
+          . getResourceAsStream ("/gfx/question.png");
+    
     private Stage stage;
     private Scene scene;
     
@@ -31,7 +38,12 @@ public class AppWindow extends Application {
 		scene = new Scene (createLayout ());
 	    nextQuestion ();
 		
-	    stage.setTitle ("Learn Java Actions | v0.0.1");
+	    if (iconIS != null) {	        
+	        stage.getIcons ().add (new Image (iconIS));
+	    }
+	    
+	    stage.setTitle (String.format (TITLE_FORMAT, 
+            questionsLoader.getPackName ()));
 	    stage.setResizable (false);
 		stage.setScene (scene);
 		stage.sizeToScene ();

@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import lombok.Getter;
 import ru.shemplo.tm.entity.Question;
 
 public class QuestionsLoader {
@@ -28,6 +29,7 @@ public class QuestionsLoader {
     }
     
     private List <Question> questions = new ArrayList <> ();
+    @Getter private String packName = "(default pack)";
     private boolean loaded = false;
     
     private QuestionsLoader () {}
@@ -37,7 +39,17 @@ public class QuestionsLoader {
         
         final String content = readResourceContent ();
         
-        final JSONArray questionsArray = new JSONArray (content);
+        final JSONObject packObject = new JSONObject (content);
+        if (!packObject.has ("questions")) {
+            String message = "Questions pack doesn't have `questions` field";
+            throw new IOException (message);
+        }
+        
+        if (packObject.has ("name")) {
+            packName = packObject.getString ("name");
+        }
+        
+        final JSONArray questionsArray = packObject.getJSONArray ("questions");
         for (int i = 0; i < questionsArray.length (); i++) {
             JSONObject questionObject = questionsArray.getJSONObject (i);
             Optional.ofNullable (parseQuestion (questionObject, i))
