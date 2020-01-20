@@ -1,9 +1,11 @@
 package ru.shemplo.tm.gui;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import lombok.Getter;
 
 @Getter
@@ -20,10 +22,13 @@ public class AnswerOption extends HBox {
         
         radio = new RadioButton (content);
         radio.setToggleGroup (group);
+        radio.setWrapText (true);
         getChildren ().add (radio);
         
         mark = new Label ();
         getChildren ().add (mark);
+        
+        setAlignment (Pos.TOP_LEFT);
     }
     
     public boolean isSelected () {

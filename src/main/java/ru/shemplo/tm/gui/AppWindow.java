@@ -1,9 +1,6 @@
 package ru.shemplo.tm.gui;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -18,6 +15,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import ru.shemplo.tm.RunTestMe;
 import ru.shemplo.tm.entity.Question;
 import ru.shemplo.tm.loader.QuestionsLoader;
 
@@ -34,6 +32,7 @@ public class AppWindow extends Application {
 	    nextQuestion ();
 		
 	    stage.setTitle ("Learn Java Actions | v0.0.1");
+	    stage.setResizable (false);
 		stage.setScene (scene);
 		stage.sizeToScene ();
 	    this.stage.show ();
@@ -126,13 +125,22 @@ public class AppWindow extends Application {
 	private final Random random = new Random ();
 	private int questionIndex = -1;
 	
+	private final Queue <Integer> uniqueQueue = new LinkedList <> ();
+	private final Set <Integer> uniquePool = new HashSet <> ();
+	
 	private void nextQuestion () {
 	    int r = questionIndex;
 	    do {	        
 	        r = random.nextInt (questionsLoader.getQuestionsNumber ());
-	    } while (r == questionIndex);
+	    } while (uniquePool.contains (r));
 	    
 	    Question question = questionsLoader.getQuestions ().get (questionIndex = r);
+	    
+	    uniqueQueue.add (questionIndex);
+	    uniquePool.add (questionIndex);
+	    if (uniqueQueue.size () > RunTestMe.UNIQUE_QUESTIONS_IN_A_ROW) {
+	        uniquePool.remove (uniqueQueue.poll ());
+	    }
 	    
 	    final List <AnswerOption> options = new ArrayList <> ();
 	    final ToggleGroup answersGroup = new ToggleGroup ();

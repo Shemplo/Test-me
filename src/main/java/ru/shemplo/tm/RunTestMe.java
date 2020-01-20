@@ -10,6 +10,8 @@ import ru.shemplo.tm.loader.QuestionsLoader;
 
 public class RunTestMe {
     
+    public static final int UNIQUE_QUESTIONS_IN_A_ROW = 5;
+    
     public static void main (String ... args) {
         try {
             QuestionsLoader.getInstance ().loadQuestions ();

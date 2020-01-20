@@ -56,7 +56,7 @@
 			"String s = new A ().field",
 			"String s = A.field",
 			"String s = A.getField ()",
-			"Все предложенные варианты не корректны"
+			"Все предложенные варианты некорректны"
 		],
 		"answer": 0
 	},
