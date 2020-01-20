@@ -121,9 +121,9 @@ public class AppWindow extends Application {
 	            });
 	        }
 	        
-	        if (!isError) {
-	            correctAnswers++;
-	        }
+	        // updating statistics of answers for the questions
+	        if (!isError) { correctAnswers++; }
+	        totalQuestions++;
 	        
 	        Platform.runLater (() -> {
 	            statisticsLabel.setText (String.format (STATISTICS_FORMAT, 
@@ -168,7 +168,6 @@ public class AppWindow extends Application {
 	    } while (uniquePool.contains (r));
 	    
 	    Question question = questionsLoader.getQuestions ().get (questionIndex = r);
-	    totalQuestions++;
 	    
 	    uniqueQueue.add (questionIndex);
 	    uniquePool.add (questionIndex);
