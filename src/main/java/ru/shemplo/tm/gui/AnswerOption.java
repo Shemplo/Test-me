@@ -19,10 +19,12 @@ import ru.shemplo.tm.entity.QuestionAnswerType;
 @Getter
 public class AnswerOption extends HBox {
     
+    @Getter
     private static final Image correctIcon = Optional.ofNullable (
         AnswerOption.class.getResourceAsStream ("/gfx/tick.png")
     ).map (is -> new Image (is, 15d, 15d, true, false)).orElse (null);
     
+    @Getter
     private static final Image wrongIcon = Optional.ofNullable (
         AnswerOption.class.getResourceAsStream ("/gfx/quit.png")
     ).map (is -> new Image (is, 15d, 15d, true, false)).orElse (null);

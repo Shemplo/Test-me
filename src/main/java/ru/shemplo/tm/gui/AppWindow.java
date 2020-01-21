@@ -1,14 +1,7 @@
 package ru.shemplo.tm.gui;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -30,8 +23,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import lombok.Getter;
 import ru.shemplo.tm.RunTestMe;
 import ru.shemplo.tm.entity.AnswerNotExistsException;
+import ru.shemplo.tm.entity.HistoryLogger;
 import ru.shemplo.tm.entity.Question;
 import ru.shemplo.tm.entity.QuestionAnswerType;
 import ru.shemplo.tm.loader.QuestionsLoader;
@@ -50,7 +45,11 @@ public class AppWindow extends Application {
     private final InputStream iconIS = AppWindow.class
           . getResourceAsStream ("/gfx/question.png");
     
-    private Stage stage;
+    @Getter
+    private final Image windowIcon = Optional.ofNullable (iconIS)
+          . map (Image::new).orElse (null);
+    
+    @Getter private Stage stage;
     private Scene scene;
     
 	@Override
@@ -67,8 +66,8 @@ public class AppWindow extends Application {
 		});
 	    nextQuestion ();
 		
-	    if (iconIS != null) {	        
-	        stage.getIcons ().add (new Image (iconIS));
+	    if (windowIcon != null) {	        
+	        stage.getIcons ().add (windowIcon);
 	    }
 	    
 	    stage.setTitle (String.format (TITLE_FORMAT, 
@@ -131,14 +130,19 @@ public class AppWindow extends Application {
 	    statisticsLabel = new Label (String.format (STATISTICS_FORMAT, 0, 0, 100));
 	    buttonsLine.getChildren ().add (statisticsLabel);
 	    
-	    //historyButton = new Button ("_Open history");
-	    //historyButton.setMnemonicParsing (true);
-	    //buttonsLine.getChildren ().add (historyButton);
+	    historyButton = new Button ("_Open history");
+	    historyButton.setMnemonicParsing (true);
+	    historyButton.setOnMouseClicked (me -> {
+	        HistoryWindow historyWindow = new HistoryWindow (this);
+	        historyWindow.show ();
+	    });
+	    buttonsLine.getChildren ().add (historyButton);
 	    
 	    return mainContainer;
 	}
 	
 	private final QuestionsLoader questionsLoader = QuestionsLoader.getInstance ();
+	@Getter private final HistoryLogger historyLogger = new HistoryLogger ();
 	private final Random random = new Random ();
 	private int questionIndex = -1;
 	
@@ -195,6 +199,9 @@ public class AppWindow extends Application {
                 isCorrect = checkOptionsSelectionAnswer (question);
             } else if (QuestionAnswerType.PATTERN.equals (question.getAnswerType ())) {
                 isCorrect = checkPatternAnswer (question);
+            } else if (QuestionAnswerType.INPUT.equals (question.getAnswerType ())) {
+                AnswerOption option = (AnswerOption) optionsBox.getChildren ().get (0);
+                historyLogger.log (question, null, option.getValue (), false);
             }
             
             if (!QuestionAnswerType.INPUT.equals (question.getAnswerType ())) {                
@@ -234,18 +241,24 @@ public class AppWindow extends Application {
             throw new AnswerNotExistsException ();
         }
         
+        List <Integer> selectedOptions = new ArrayList <> ();
         int answersFound = 0;
+        
         for (Node node : optionsBox.getChildren ()) {
             final AnswerOption option = (AnswerOption) node;
             
             boolean isAnswer = answer.contains (option.getIndex ());
             
-            if (isAnswer) { 
+            if (isAnswer) {
+                if (option.isSelected ()) {                    
+                    selectedOptions.add (option.getIndex () + 1);
+                }
                 option.markAsCorrect (); 
                 answersFound++;
             }
             
-            if ((option.isSelected () && !isAnswer)) {
+            if (option.isSelected () && !isAnswer) {
+                selectedOptions.add (-option.getIndex () - 1);
                 option.markAsError ();
                 isError = true;
             }
@@ -253,7 +266,9 @@ public class AppWindow extends Application {
             option.fixSelection ();
         }
         
-	    return !isError && answersFound == answer.size ();
+	    boolean isCorrect = !isError && answersFound == answer.size ();
+	    historyLogger.log (question, selectedOptions, null, isCorrect);
+	    return isCorrect;
 	}
 	
 	private boolean checkPatternAnswer (Question question) {
@@ -263,11 +278,13 @@ public class AppWindow extends Application {
         final String answer = option.getValue ();
         for (String pattern : question.getOptions ()) {
             if (answer.matches (pattern)) {
+                historyLogger.log (question, null, answer, true);
                 option.markAsCorrect ();
                 return true;
             }
         }
         
+        historyLogger.log (question, null, answer, false);
         option.markAsError ();
         return false;
 	}
