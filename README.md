@@ -21,12 +21,29 @@ Formats of question objects:
 ```json
 {
   "question": "Content of the question. It may contain \n to break line",
+  "answer-type": "SINGLE",
   "options": [
     "answer option 1",
     "answer option 2",
     ...
   ],
-  "answer": 0, //_index_of_correct_answer_option_in_`options`_array_(starts_from_0)
+  "answer": [0], //_index_of_correct_option_in_`options`_array_(starts_from_0,_must_constain_single_value)
+  "comment": "String that will be shown if wrong answer was selected" //_optional
+}
+```
+
+* Several correct options
+
+```json
+{
+  "question": "Content of the question. It may contain \n to break line",
+  "answer-type": "SEVERAL",
+  "options": [
+    "answer option 1",
+    "answer option 2",
+    ...
+  ],
+  "answer": [0, 1], //_indies_of_correct_optionsin_`options`_array_(starts_from_0)
   "comment": "String that will be shown if wrong answer was selected" //_optional
 }
 ```
