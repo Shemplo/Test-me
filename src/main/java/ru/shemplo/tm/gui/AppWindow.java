@@ -86,7 +86,7 @@ public class AppWindow extends Application {
 	        Platform.runLater (() -> { commentLabel.setText (""); });
 	        
 	        Question question = questionsLoader.getQuestions ().get (questionIndex);
-	        int answer = question.getCorrectOption ();
+	        Set <Integer> answer = question.getCorrectOptions ();
 	        
 	        boolean isError = false, isAnySelected = false;
 	        for (Node node : optionsBox.getChildren ()) {
@@ -102,11 +102,17 @@ public class AppWindow extends Application {
 	            return;
 	        }
 	        
+	        int answersFound = 0;
 	        for (Node node : optionsBox.getChildren ()) {
                 final AnswerOption option = (AnswerOption) node;
-                boolean isAnswer = answer == option.getIndex ();
                 
-                if (isAnswer) { option.markAsCorrect (); }
+                boolean isAnswer = answer.contains (option.getIndex ());
+                
+                if (isAnswer) { 
+                    option.markAsCorrect (); 
+                    answersFound++;
+                }
+                
                 if ((option.isSelected () && !isAnswer)) {
                     option.markAsError ();
                     isError = true;
@@ -115,14 +121,17 @@ public class AppWindow extends Application {
                 option.fixSelection ();
             }
 	        
-	        if (isError && question.getComment () != null) {
+	        if ((isError || answersFound != answer.size ()) 
+	                && question.getComment () != null) {
 	            Platform.runLater (() -> {
 	                commentLabel.setText (question.getComment ());
 	            });
 	        }
 	        
 	        // updating statistics of answers for the questions
-	        if (!isError) { correctAnswers++; }
+	        if (!isError && answersFound == answer.size ()) { 
+	            correctAnswers++; 
+            }
 	        totalQuestions++;
 	        
 	        Platform.runLater (() -> {
@@ -179,7 +188,8 @@ public class AppWindow extends Application {
 	    final ToggleGroup answersGroup = new ToggleGroup ();
 	    
 	    for (int i = 0; i < question.getOptions ().size (); i++) {
-	        options.add (new AnswerOption (i, question.getOptions ().get (i), answersGroup));
+	        final String option = question.getOptions ().get (i);
+	        options.add (new AnswerOption (i, question, option, answersGroup));
 	    }
 	    
 	    Collections.shuffle (options);

@@ -3,16 +3,14 @@ package ru.shemplo.tm.loader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import lombok.Getter;
 import ru.shemplo.tm.entity.Question;
+import ru.shemplo.tm.entity.QuestionAnswerType;
 
 public class QuestionsLoader {
     
@@ -97,8 +95,34 @@ public class QuestionsLoader {
             return null;
         }
         
-        Question question = new Question (object.getString ("question"));
-        question.setCorrectOption (object.getInt ("answer"));
+        QuestionAnswerType answerType = QuestionAnswerType.SINGLE;
+        if (object.has ("answer-type")) {
+            try {
+                String value = object.getString ("answer-type");
+                answerType = QuestionAnswerType.valueOf (value);
+            } catch (IllegalArgumentException iae) {
+                // it's expected behavior
+            } 
+        }
+        
+        final Set <Integer> answer = new HashSet <> ();
+        
+        JSONArray answersArray = object.getJSONArray ("answer");
+        if (QuestionAnswerType.SINGLE.equals (answerType) && answersArray.length () != 1) {
+            System.out.println (String.format (
+                "[WARN] Answer of object #%d should contain 1 correct option", 
+                index + 1
+            ));
+            return null;
+        }
+        
+        for (int i = 0; i < answersArray.length (); i++) {
+            int correctOption = answersArray.getInt (i);
+            answer.add (correctOption);
+        }
+        
+        Question question = new Question (object.getString ("question"), answerType);
+        question.setCorrectOptions (Collections.unmodifiableSet (answer));
         question.setOptions (new ArrayList <> ());
         
         if (object.has ("comment")) {
@@ -110,6 +134,7 @@ public class QuestionsLoader {
             question.getOptions ().add (options.getString (i));
         }
 
+        question.setOptions (Collections.unmodifiableList (question.getOptions ()));
         return question;
     }
     
