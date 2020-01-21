@@ -47,3 +47,17 @@ Formats of question objects:
   "comment": "String that will be shown if wrong answer was selected" //_optional
 }
 ```
+
+* Custom text input
+
+```json
+{
+  "question": "Content of the question. It may contain \n to break line",
+  "answer-type": "pattern",
+  "options": [ //_answer_is_correct_if_it_matches_at_least_one_regular_expression_from_`options`
+    "regular expression 1",
+    ...
+  ],
+  "comment": "String that will be shown if wrong answer was entered" //_optional
+}
+```
