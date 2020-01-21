@@ -15,6 +15,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -28,6 +31,12 @@ public class AppWindow extends Application {
     public static final String STATISTICS_FORMAT = "Session: %d questions, %d correct (%d%%)";
     public static final String TITLE_FORMAT = "Test me ( v0.0.1 ) | %s";
     
+    private final MouseEvent fakeMouseEvent = new MouseEvent (
+        MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, 
+        false, false, false, false, false, false, false, false, false, 
+        false, false, false, null
+    );
+    
     private final InputStream iconIS = AppWindow.class
           . getResourceAsStream ("/gfx/question.png");
     
@@ -39,6 +48,13 @@ public class AppWindow extends Application {
 		this.stage = stage;
 		
 		scene = new Scene (createLayout ());
+		scene.setOnKeyPressed (ke -> {
+		    if (KeyCode.C.equals (ke.getCode ())) {
+		        checkButton.getOnMouseClicked ().handle (fakeMouseEvent);
+		    } else if (KeyCode.N.equals (ke.getCode ())) {
+		        nextQuestionButton.getOnMouseClicked ().handle (fakeMouseEvent);
+		    }
+		});
 	    nextQuestion ();
 		
 	    if (iconIS != null) {	        
@@ -64,6 +80,7 @@ public class AppWindow extends Application {
 	    mainContainer.setPadding (new Insets (8));
 	    
 	    questionContent = new TextArea ("");
+	    questionContent.setFocusTraversable (false);
 	    questionContent.setEditable (false);
 	    questionContent.setMaxHeight (100);
 	    mainContainer.getChildren ().add (questionContent);
@@ -81,7 +98,8 @@ public class AppWindow extends Application {
 	    buttonsLine.setAlignment (Pos.CENTER_LEFT);
 	    mainContainer.getChildren ().add (buttonsLine);
 	    
-	    checkButton = new Button ("Check answer");
+	    checkButton = new Button ("_Check answer");
+	    checkButton.setMnemonicParsing (true);
 	    checkButton.setOnMouseClicked (me -> {
 	        Platform.runLater (() -> { commentLabel.setText (""); });
 	        
@@ -145,7 +163,8 @@ public class AppWindow extends Application {
 	    });
 	    buttonsLine.getChildren ().add (checkButton);
 	    
-	    nextQuestionButton = new Button ("Next question");
+	    nextQuestionButton = new Button ("_Next question");
+	    nextQuestionButton.setMnemonicParsing (true);
 	    nextQuestionButton.setOnMouseClicked (me -> {
 	        nextQuestion ();
 	    });
