@@ -2,6 +2,10 @@
 
 This is applications that loads questions in _JSON_ format and then randomly asks user to answer for some selected question in test format. For example, it can be helpful when you are preparing for exam in University or just started to learn something new.
 
+### Requirements
+
+* **JRE 13+** (Actually it can be run even under JRE 11, for this change `source` and `target` versions to 11 in `pom.xml` file before building project)
+
 ### Format of `questions.json` file
 
 File must match such format:
