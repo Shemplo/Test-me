@@ -89,25 +89,23 @@ public class QuestionsLoader {
     private Question parseQuestion (JSONObject object, int index) {
         assertFieldInObject (object, "question", index);
         assertFieldInObject (object, "options", index);
-        assertFieldInObject (object, "answer", index);
         
         final QuestionAnswerType answerType = fetchAnswerType (object, index);
-        final Set <Integer> answer = fetchAnswer (object, answerType, index);
+        final Question question = new Question (object.getString ("question"), answerType);
         
-        Question question = new Question (object.getString ("question"), answerType);
-        question.setCorrectOptions (Collections.unmodifiableSet (answer));
-        question.setOptions (new ArrayList <> ());
+        if (QuestionAnswerType.SINGLE.equals (answerType) 
+                || QuestionAnswerType.SEVERAL.equals (answerType)) {
+            assertFieldInObject (object, "answer", index);            
+            
+            final Set <Integer> answer = fetchAnswer (object, answerType, index);
+            question.setCorrectOptions (answer);
+        }
         
         if (object.has ("comment")) {
             question.setComment (object.getString ("comment"));
         }
-        
-        JSONArray options = object.getJSONArray ("options");
-        for (int i = 0; i < options.length (); i++) {
-            question.getOptions ().add (options.getString (i));
-        }
 
-        question.setOptions (Collections.unmodifiableList (question.getOptions ()));
+        question.setOptions (fetchOptions (object, index));
         return question;
     }
     
@@ -150,7 +148,18 @@ public class QuestionsLoader {
             answer.add (correctOption);
         }
         
-        return answer;
+        return Collections.unmodifiableSet (answer);
+    }
+    
+    private static List <String> fetchOptions (JSONObject object, int index) {
+        final List <String> options = new ArrayList <> ();
+        
+        JSONArray optionsArray = object.getJSONArray ("options");
+        for (int i = 0; i < optionsArray.length (); i++) {
+            options.add (optionsArray.getString (i));
+        }
+        
+        return Collections.unmodifiableList (options);
     }
     
 }

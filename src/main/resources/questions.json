@@ -140,6 +140,13 @@
                 "List <Object>"
             ],
             "answer": [0, 1]
+        },
+        {
+            "question": "Перечислите через пробел все примитивные типы размером 4 байта\n(в алфавитном порядке)",
+            "answer-type": "pattern",
+            "options": [
+            	"boolean\\s+int\\s+float",
+            ]
         }
     ]
 }

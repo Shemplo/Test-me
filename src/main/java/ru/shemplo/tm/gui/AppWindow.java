@@ -1,7 +1,14 @@
 package ru.shemplo.tm.gui;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Random;
+import java.util.Set;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -21,9 +28,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import ru.shemplo.tm.RunTestMe;
+import ru.shemplo.tm.entity.AnswerNotExistsException;
 import ru.shemplo.tm.entity.Question;
+import ru.shemplo.tm.entity.QuestionAnswerType;
 import ru.shemplo.tm.loader.QuestionsLoader;
 
 public class AppWindow extends Application {
@@ -86,13 +96,14 @@ public class AppWindow extends Application {
 	    questionContent.setMaxHeight (100);
 	    mainContainer.getChildren ().add (questionContent);
 	    
-	    final Label label1 = new Label ("Choose correct answer from options below:");
+	    final Label label1 = new Label ("Choose correct answer from options below or enter your answer:");
 	    mainContainer.getChildren ().add (label1);
 	    
 	    optionsBox = new VBox (8);
 	    mainContainer.getChildren ().add (optionsBox);
 	    
 	    commentLabel = new Label ("");
+	    commentLabel.setTextFill (Color.DARKRED);
 	    mainContainer.getChildren ().add (commentLabel);
 	    
 	    final HBox buttonsLine = new HBox (8);
@@ -102,65 +113,7 @@ public class AppWindow extends Application {
 	    checkButton = new Button ("_Check answer");
 	    checkButton.setMnemonicParsing (true);
 	    checkButton.setOnMouseClicked (me -> {
-	        Platform.runLater (() -> { commentLabel.setText (""); });
-	        
-	        Question question = questionsLoader.getQuestions ().get (questionIndex);
-	        Set <Integer> answer = question.getCorrectOptions ();
-	        
-	        boolean isError = false, isAnySelected = false;
-	        for (Node node : optionsBox.getChildren ()) {
-	            final AnswerOption option = (AnswerOption) node;
-	            isAnySelected |= option.isSelected ();
-	        }
-	        
-	        if (!isAnySelected) {
-	            Platform.runLater (() -> {
-                    commentLabel.setText ("Select one options as an asnwer");
-                });
-	            
-	            return;
-	        }
-	        
-	        int answersFound = 0;
-	        for (Node node : optionsBox.getChildren ()) {
-                final AnswerOption option = (AnswerOption) node;
-                
-                boolean isAnswer = answer.contains (option.getIndex ());
-                
-                if (isAnswer) { 
-                    option.markAsCorrect (); 
-                    answersFound++;
-                }
-                
-                if ((option.isSelected () && !isAnswer)) {
-                    option.markAsError ();
-                    isError = true;
-                }
-                
-                option.fixSelection ();
-            }
-	        
-	        if ((isError || answersFound != answer.size ()) 
-	                && question.getComment () != null) {
-	            Platform.runLater (() -> {
-	                commentLabel.setText (question.getComment ());
-	            });
-	        }
-	        
-	        // updating statistics of answers for the questions
-	        if (!isError && answersFound == answer.size ()) { 
-	            correctAnswers++; 
-            }
-	        totalQuestions++;
-	        
-	        Platform.runLater (() -> {
-	            statisticsLabel.setText (String.format (STATISTICS_FORMAT, 
-                    (int) totalQuestions, (int) correctAnswers, 
-                    (int) (correctAnswers / totalQuestions * 100)
-                ));
-	            nextQuestionButton.setDisable (false);
-	            checkButton.setDisable (true);
-	        });
+	        checkAnswer ();
 	    });
 	    buttonsLine.getChildren ().add (checkButton);
 	    
@@ -228,6 +181,95 @@ public class AppWindow extends Application {
 	        
 	        stage.sizeToScene ();
 	    });
+	}
+	
+	private void checkAnswer () {
+	    Platform.runLater (() -> { commentLabel.setText (""); });
+        
+        Question question = questionsLoader.getQuestions ().get (questionIndex);
+        
+        try {            
+            boolean isCorrect = false;
+            
+            if (question.isOptionsSelection ()) {
+                isCorrect = checkOptionsSelectionAnswer (question);
+            } else if (QuestionAnswerType.PATTERN.equals (question.getAnswerType ())) {
+                isCorrect = checkPatternAnswer (question);
+            }
+            
+            if (!QuestionAnswerType.INPUT.equals (question.getAnswerType ())) {                
+                if (!isCorrect) {
+                    Platform.runLater (() -> commentLabel.setText (question.getComment ()));
+                }
+                
+                if (isCorrect) { correctAnswers++; }
+                totalQuestions++;
+            }
+            
+            Platform.runLater (() -> {
+                statisticsLabel.setText (String.format (STATISTICS_FORMAT, 
+                    (int) totalQuestions, (int) correctAnswers, 
+                    (int) (correctAnswers / totalQuestions * 100)
+                ));
+                nextQuestionButton.setDisable (false);
+                checkButton.setDisable (true);
+            });
+        } catch (AnswerNotExistsException anee) {
+            Platform.runLater (() -> {
+                commentLabel.setText ("Select at leat one option as an asnwer or enter answer in the field");
+            });
+        }
+	}
+	
+	private boolean checkOptionsSelectionAnswer (Question question) {
+	    Set <Integer> answer = question.getCorrectOptions ();
+        
+        boolean isError = false, isAnySelected = false;
+        for (Node node : optionsBox.getChildren ()) {
+            final AnswerOption option = (AnswerOption) node;
+            isAnySelected |= option.isSelected ();
+        }
+        
+        if (!isAnySelected) {
+            throw new AnswerNotExistsException ();
+        }
+        
+        int answersFound = 0;
+        for (Node node : optionsBox.getChildren ()) {
+            final AnswerOption option = (AnswerOption) node;
+            
+            boolean isAnswer = answer.contains (option.getIndex ());
+            
+            if (isAnswer) { 
+                option.markAsCorrect (); 
+                answersFound++;
+            }
+            
+            if ((option.isSelected () && !isAnswer)) {
+                option.markAsError ();
+                isError = true;
+            }
+            
+            option.fixSelection ();
+        }
+        
+	    return !isError && answersFound == answer.size ();
+	}
+	
+	private boolean checkPatternAnswer (Question question) {
+	    AnswerOption option = (AnswerOption) optionsBox.getChildren ().get (0);
+        option.fixSelection ();
+        
+        final String answer = option.getValue ();
+        for (String pattern : question.getOptions ()) {
+            if (answer.matches (pattern)) {
+                option.markAsCorrect ();
+                return true;
+            }
+        }
+        
+        option.markAsError ();
+        return false;
 	}
 
 }

@@ -22,4 +22,9 @@ public class Question {
 	
 	private String comment;
 	
+	public boolean isOptionsSelection () {
+	    return QuestionAnswerType.SINGLE.equals (answerType) 
+	        || QuestionAnswerType.SEVERAL.equals (answerType);
+	}
+	
 }

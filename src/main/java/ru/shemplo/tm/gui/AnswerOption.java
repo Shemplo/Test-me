@@ -3,10 +3,15 @@ package ru.shemplo.tm.gui;
 import java.util.Optional;
 
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import lombok.Getter;
 import ru.shemplo.tm.entity.Question;
 import ru.shemplo.tm.entity.QuestionAnswerType;
@@ -24,6 +29,7 @@ public class AnswerOption extends HBox {
     
     private final CheckBox checkbox;
     private final RadioButton radio;
+    private final TextField input;
     private final Label mark;
     private final int index;
     
@@ -44,13 +50,24 @@ public class AnswerOption extends HBox {
             getChildren ().add (radio);
             
             checkbox = null;
+            input = null;
         } else if (QuestionAnswerType.SEVERAL.equals (answerType)) {
             checkbox = new CheckBox (content);
             getChildren ().add (checkbox);
             
+            input = null;
+            radio = null;
+        } else if (QuestionAnswerType.PATTERN.equals (answerType)
+                || QuestionAnswerType.INPUT.equals (answerType)) {
+            input = new TextField ("");
+            HBox.setHgrow (input, Priority.ALWAYS);
+            getChildren ().add (input);
+            
+            checkbox = null;
             radio = null;
         } else {
             checkbox = null;
+            input = null;
             radio = null;
         }
         
@@ -66,6 +83,13 @@ public class AnswerOption extends HBox {
             return radio.isSelected ();
         }
         return false;
+    }
+    
+    public String getValue () {
+        if (input != null) {
+            return input.getText ().strip ();
+        }
+        return null;
     }
     
     public void markAsCorrect () {
@@ -86,6 +110,7 @@ public class AnswerOption extends HBox {
     
     public void fixSelection () {
         Optional.ofNullable (checkbox).ifPresent (a -> a.setDisable (true));
+        Optional.ofNullable (input).ifPresent (a -> a.setDisable (true));
         Optional.ofNullable (radio).ifPresent (a -> a.setDisable (true));
     }
     
