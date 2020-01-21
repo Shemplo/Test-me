@@ -43,7 +43,7 @@ Formats of question objects:
     "answer option 2",
     ...
   ],
-  "answer": [0, 1], //_indies_of_correct_optionsin_`options`_array_(starts_from_0)
+  "answer": [0, 1], //_indies_of_correct_options_in_`options`_array_(starts_from_0)
   "comment": "String that will be shown if wrong answer was selected" //_optional
 }
 ```

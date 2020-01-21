@@ -26,7 +26,7 @@ public class QuestionsLoader {
         return instance;
     }
     
-    private List <Question> questions = new ArrayList <> ();
+    @Getter private List <Question> questions = List.of ();
     @Getter private String packName = "(default pack)";
     private boolean loaded = false;
     
@@ -48,13 +48,20 @@ public class QuestionsLoader {
         }
         
         final JSONArray questionsArray = packObject.getJSONArray ("questions");
+        questions = new ArrayList <> ();
+        
         for (int i = 0; i < questionsArray.length (); i++) {
             JSONObject questionObject = questionsArray.getJSONObject (i);
-            Optional.ofNullable (parseQuestion (questionObject, i))
-                    .ifPresent  (questions::add);
+            try {
+                questions.add (parseQuestion (questionObject, i));
+            } catch (IllegalStateException ise) {
+                // action is not required (question is ignored)
+                System.out.println (ise.getMessage ());
+            }
         }
         
         System.out.println (String.format ("[INFO] %d questions was loaded", questions.size ()));
+        questions = Collections.unmodifiableList (questions);
         loaded = true;
     }
     
@@ -80,46 +87,12 @@ public class QuestionsLoader {
     }
     
     private Question parseQuestion (JSONObject object, int index) {
-        if (!object.has ("question")) {
-            System.out.println (String.format ("[WARN] Object #%d doesn't have `question` field", index + 1));
-            return null;
-        }
+        assertFieldInObject (object, "question", index);
+        assertFieldInObject (object, "options", index);
+        assertFieldInObject (object, "answer", index);
         
-        if (!object.has ("options")) {
-            System.out.println (String.format ("[WARN] Object #%d doesn't have `options` field", index + 1));
-            return null;
-        }
-        
-        if (!object.has ("answer")) {
-            System.out.println (String.format ("[WARN] Object #%d doesn't have `answer` field", index + 1));
-            return null;
-        }
-        
-        QuestionAnswerType answerType = QuestionAnswerType.SINGLE;
-        if (object.has ("answer-type")) {
-            try {
-                String value = object.getString ("answer-type");
-                answerType = QuestionAnswerType.valueOf (value);
-            } catch (IllegalArgumentException iae) {
-                // it's expected behavior
-            } 
-        }
-        
-        final Set <Integer> answer = new HashSet <> ();
-        
-        JSONArray answersArray = object.getJSONArray ("answer");
-        if (QuestionAnswerType.SINGLE.equals (answerType) && answersArray.length () != 1) {
-            System.out.println (String.format (
-                "[WARN] Answer of object #%d should contain 1 correct option", 
-                index + 1
-            ));
-            return null;
-        }
-        
-        for (int i = 0; i < answersArray.length (); i++) {
-            int correctOption = answersArray.getInt (i);
-            answer.add (correctOption);
-        }
+        final QuestionAnswerType answerType = fetchAnswerType (object, index);
+        final Set <Integer> answer = fetchAnswer (object, answerType, index);
         
         Question question = new Question (object.getString ("question"), answerType);
         question.setCorrectOptions (Collections.unmodifiableSet (answer));
@@ -138,12 +111,46 @@ public class QuestionsLoader {
         return question;
     }
     
-    public List <Question> getQuestions () {
-        return Collections.unmodifiableList (questions);
-    }
-    
     public int getQuestionsNumber () {
         return questions.size ();
+    }
+    
+    private void assertFieldInObject (JSONObject object, String field, int index) {
+        if (object.has (field)) { return; }
+        
+        String message = String.format ("[WARN] Object #%d doesn't have `%s` field", index + 1, field);
+        throw new IllegalStateException (message);
+    }
+    
+    private static QuestionAnswerType fetchAnswerType (JSONObject object, int index) {
+        QuestionAnswerType answerType = QuestionAnswerType.SINGLE;
+        if (object.has ("answer-type")) {
+            try {
+                String value = object.getString ("answer-type").toUpperCase ();
+                answerType = QuestionAnswerType.valueOf (value);
+            } catch (IllegalArgumentException iae) {
+                // it's expected behavior
+            } 
+        }
+        
+        return answerType;
+    }
+    
+    private static Set <Integer> fetchAnswer (JSONObject object, QuestionAnswerType answerType, int index) {
+        final Set <Integer> answer = new HashSet <> ();
+        
+        JSONArray answersArray = object.getJSONArray ("answer");
+        if (QuestionAnswerType.SINGLE.equals (answerType) && answersArray.length () != 1) {
+            String message = String.format ("[WARN] Answer of object #%d should contain 1 correct option", index + 1);
+            throw new IllegalStateException (message);
+        }
+        
+        for (int i = 0; i < answersArray.length (); i++) {
+            int correctOption = answersArray.getInt (i);
+            answer.add (correctOption);
+        }
+        
+        return answer;
     }
     
 }

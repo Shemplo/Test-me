@@ -73,11 +73,12 @@ public class AppWindow extends Application {
 	private TextArea questionContent;
 	private VBox optionsBox;
 	
-	private Button checkButton, nextQuestionButton;
+	private Button checkButton, nextQuestionButton, historyButton;
 	
 	private Parent createLayout () {
 	    final VBox mainContainer = new VBox (8);
 	    mainContainer.setPadding (new Insets (8));
+	    mainContainer.setMinWidth (550);
 	    
 	    questionContent = new TextArea ("");
 	    questionContent.setFocusTraversable (false);
@@ -85,7 +86,7 @@ public class AppWindow extends Application {
 	    questionContent.setMaxHeight (100);
 	    mainContainer.getChildren ().add (questionContent);
 	    
-	    final Label label1 = new Label ("Choose correct answer:");
+	    final Label label1 = new Label ("Choose correct answer from options below:");
 	    mainContainer.getChildren ().add (label1);
 	    
 	    optionsBox = new VBox (8);
@@ -176,6 +177,10 @@ public class AppWindow extends Application {
 	    
 	    statisticsLabel = new Label (String.format (STATISTICS_FORMAT, 0, 0, 100));
 	    buttonsLine.getChildren ().add (statisticsLabel);
+	    
+	    //historyButton = new Button ("_Open history");
+	    //historyButton.setMnemonicParsing (true);
+	    //buttonsLine.getChildren ().add (historyButton);
 	    
 	    return mainContainer;
 	}
