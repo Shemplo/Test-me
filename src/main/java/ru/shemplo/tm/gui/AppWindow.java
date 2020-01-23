@@ -107,6 +107,7 @@ public class AppWindow extends Application {
 	    questionContent.setFocusTraversable (false);
 	    questionContent.setEditable (false);
 	    questionContent.setMaxHeight (100);
+	    questionContent.setWrapText (true);
 	    mainContainer.getChildren ().add (questionContent);
 	    
 	    final Label label1 = new Label ("Choose correct answer from options below or enter your answer:");
@@ -117,6 +118,7 @@ public class AppWindow extends Application {
 	    
 	    commentLabel = new Label ("");
 	    commentLabel.setTextFill (Color.DARKRED);
+	    commentLabel.setWrapText (true);
 	    mainContainer.getChildren ().add (commentLabel);
 	    
 	    final HBox buttonsLine = new HBox (8);
