@@ -12,6 +12,8 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public class Question {
 
+    private final int id;
+    
 	@NonNull private String question;
 	
 	@NonNull private QuestionAnswerType answerType;
@@ -21,6 +23,8 @@ public class Question {
 	private Set <Integer> correctOptions;
 	
 	private String comment;
+	
+	private String difficulty;
 	
 	public boolean isOptionsSelection () {
 	    return QuestionAnswerType.SINGLE.equals (answerType) 

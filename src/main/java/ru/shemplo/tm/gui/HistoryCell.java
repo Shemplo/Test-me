@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.RequiredArgsConstructor;
 import ru.shemplo.tm.entity.HistoryLogEntry;
+import ru.shemplo.tm.entity.Question;
 import ru.shemplo.tm.entity.QuestionAnswerType;
 
 @RequiredArgsConstructor
@@ -32,7 +33,12 @@ public class HistoryCell extends ListCell <HistoryLogEntry> {
         final VBox root = new VBox (8);
         root.setMaxWidth (480);
         
-        Label questionLabel = new Label (item.getQuestion ().getQuestion ());
+        final Question question = item.getQuestion ();
+        Label questionHeader = new Label ("Question #" + question.getId () 
+            + (question.getDifficulty () != null ? ", " + question.getDifficulty () : ""));
+        root.getChildren ().add (questionHeader);
+        
+        Label questionLabel = new Label (question.getQuestion ());
         questionLabel.setEllipsisString ("...");
         questionLabel.setMaxWidth (480);
         root.getChildren ().add (questionLabel);
@@ -49,7 +55,7 @@ public class HistoryCell extends ListCell <HistoryLogEntry> {
                 
                 line.getChildren ().add (new ImageView (verdictImage));
                 
-                String optionValue = item.getQuestion ().getOptions ().get (index);
+                String optionValue = question.getOptions ().get (index);
                 Label answerContent = new Label (optionValue); 
                 answerContent.setMaxWidth (480 - 16);
                 answerContent.setWrapText (true);

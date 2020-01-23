@@ -78,7 +78,8 @@ public class AppWindow extends Application {
 	    this.stage.show ();
 	}
 	
-	private Label commentLabel, statisticsLabel;
+	private Label commentLabel, statisticsLabel, questionNameLabel, 
+	    questionDifficultyLabel;
 	private TextArea questionContent;
 	private VBox optionsBox;
 	
@@ -88,6 +89,19 @@ public class AppWindow extends Application {
 	    final VBox mainContainer = new VBox (8);
 	    mainContainer.setPadding (new Insets (8));
 	    mainContainer.setMinWidth (550);
+	    
+	    final HBox headerLine = new HBox (8);
+	    mainContainer.getChildren ().add (headerLine);
+	    
+	    questionNameLabel = new Label ("Question #1");
+	    headerLine.getChildren ().add (questionNameLabel);
+	    
+	    final HBox wideBox = new HBox ();
+        HBox.setHgrow (wideBox, Priority.ALWAYS);
+        headerLine.getChildren ().add (wideBox);
+        
+        questionDifficultyLabel = new Label ("");
+        headerLine.getChildren ().add (questionDifficultyLabel);
 	    
 	    questionContent = new TextArea ("");
 	    questionContent.setFocusTraversable (false);
@@ -123,9 +137,9 @@ public class AppWindow extends Application {
 	    });
 	    buttonsLine.getChildren ().add (nextQuestionButton);
 	    
-	    final HBox wideBox = new HBox ();
-	    HBox.setHgrow (wideBox, Priority.ALWAYS);
-	    buttonsLine.getChildren ().add (wideBox);
+	    final HBox wideBox2 = new HBox ();
+	    HBox.setHgrow (wideBox2, Priority.ALWAYS);
+	    buttonsLine.getChildren ().add (wideBox2);
 	    
 	    statisticsLabel = new Label (String.format (STATISTICS_FORMAT, 0, 0, 100));
 	    buttonsLine.getChildren ().add (statisticsLabel);
@@ -176,6 +190,16 @@ public class AppWindow extends Application {
 	    Collections.shuffle (options);
 	    
 	    Platform.runLater (() -> {
+	        questionNameLabel.setText (String.format (
+                "Question #%d", question.getId ()
+            ));
+	        if (question.getDifficulty () != null) {	            
+	            questionDifficultyLabel.setText (String.format (
+                    "Difficulty: %s", question.getDifficulty ()
+                ));
+	        } else {
+	            questionDifficultyLabel.setText ("");
+	        }
 	        questionContent.setText (question.getQuestion ());
 	        checkButton.setDisable (false);
 	        commentLabel.setText ("");

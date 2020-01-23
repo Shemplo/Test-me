@@ -29,6 +29,7 @@ public class QuestionsLoader {
     @Getter private List <Question> questions = List.of ();
     @Getter private String packName = "(default pack)";
     private boolean loaded = false;
+    private int idGenerator = 0;
     
     private QuestionsLoader () {}
     
@@ -91,7 +92,10 @@ public class QuestionsLoader {
         assertFieldInObject (object, "options", index);
         
         final QuestionAnswerType answerType = fetchAnswerType (object, index);
-        final Question question = new Question (object.getString ("question"), answerType);
+        final String questionS = object.getString ("question");
+        final Question question = new Question (
+            ++idGenerator, questionS, answerType
+        );
         
         if (QuestionAnswerType.SINGLE.equals (answerType) 
                 || QuestionAnswerType.SEVERAL.equals (answerType)) {
@@ -103,6 +107,10 @@ public class QuestionsLoader {
         
         if (object.has ("comment")) {
             question.setComment (object.getString ("comment"));
+        }
+        
+        if (object.has ("difficulty")) {
+            question.setDifficulty (object.getString ("difficulty"));
         }
 
         question.setOptions (fetchOptions (object, index));

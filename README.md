@@ -26,6 +26,7 @@ Formats of question objects:
 {
   "question": "Content of the question. It may contain \n to break line",
   "answer-type": "SINGLE",
+  "difficulty": "**", //_from_1_to_5_star_characters_for_show_difficulty_of_question_(optional)
   "options": [
     "answer option 1",
     "answer option 2",
@@ -42,6 +43,7 @@ Formats of question objects:
 {
   "question": "Content of the question. It may contain \n to break line",
   "answer-type": "SEVERAL",
+  "difficulty": "***", //_from_1_to_5_star_characters_for_show_difficulty_of_question_(optional)
   "options": [
     "answer option 1",
     "answer option 2",
@@ -58,6 +60,7 @@ Formats of question objects:
 {
   "question": "Content of the question. It may contain \n to break line",
   "answer-type": "pattern",
+  "difficulty": "*", //_from_1_to_5_star_characters_for_show_difficulty_of_question_(optional)
   "options": [ //_answer_is_correct_if_it_matches_at_least_one_regular_expression_from_`options`
     "regular expression 1",
     ...

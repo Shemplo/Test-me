@@ -60,6 +60,7 @@
         {
             "question": "Какое из предложенных действий возможно для кода ниже:\npublic class A {\n    public final String field = \"string value\";\n}",
             "answer-type": "SINGLE",
+            "difficulty": "**",
             "options": [
                 "String s = new A ().field;",
                 "String s = A.field;",
@@ -107,6 +108,7 @@
         {
             "question": "Действия, которые класс выполняет по отношению к другим\nклассам и интерфейсам",
             "answer-type": "SINGLE",
+            "difficulty": "**",
             "options": [
                 "Класс расширяет (наследует) класс и реализует интерфейс",
                 "Класс реализует класс и расширяет (наследует) интерфейс",
@@ -119,6 +121,7 @@
         {
             "question": "<char> \"75\";",
             "answer-type": "single",
+            "difficulty": "*",
             "options": [
             	"Некорректный код",
                 "Приведение строкового представления числа 75 к типу `char`",
@@ -130,6 +133,7 @@
         {
         	"question": "Выберите примитивные типы из предложенных вариантов",
             "answer-type": "several",
+            "difficulty": "*",
             "options": [
             	"int",
                 "boolean",
