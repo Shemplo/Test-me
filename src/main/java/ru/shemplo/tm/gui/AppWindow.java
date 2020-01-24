@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -44,6 +45,16 @@ public class AppWindow extends Application {
     
     private final InputStream iconIS = AppWindow.class
           . getResourceAsStream ("/gfx/question.png");
+    
+    @Getter
+    private static final Image emptyStarIcon = Optional.ofNullable (
+        AnswerOption.class.getResourceAsStream ("/gfx/empty-star.png")
+    ).map (is -> new Image (is, 12d, 12d, true, false)).orElse (null);
+    
+    @Getter
+    private static final Image starIcon = Optional.ofNullable (
+        AnswerOption.class.getResourceAsStream ("/gfx/star.png")
+    ).map (is -> new Image (is, 12d, 12d, true, false)).orElse (null);
     
     @Getter
     private final Image windowIcon = Optional.ofNullable (iconIS)
@@ -91,6 +102,7 @@ public class AppWindow extends Application {
 	    mainContainer.setMinWidth (550);
 	    
 	    final HBox headerLine = new HBox (8);
+	    headerLine.setAlignment (Pos.CENTER_LEFT);
 	    mainContainer.getChildren ().add (headerLine);
 	    
 	    questionNameLabel = new Label ("Question #1");
@@ -100,7 +112,8 @@ public class AppWindow extends Application {
         HBox.setHgrow (wideBox, Priority.ALWAYS);
         headerLine.getChildren ().add (wideBox);
         
-        questionDifficultyLabel = new Label ("");
+        questionDifficultyLabel = new Label ("(difficulty)");
+        questionDifficultyLabel.setGraphic (null);
         headerLine.getChildren ().add (questionDifficultyLabel);
 	    
 	    questionContent = new TextArea ("");
@@ -194,11 +207,16 @@ public class AppWindow extends Application {
                 "Question #%d", question.getId ()
             ));
 	        if (question.getDifficulty () != null) {	            
+	            /*
 	            questionDifficultyLabel.setText (String.format (
                     "Difficulty: %s", question.getDifficulty ()
                 ));
+                */
+	            final int difficulty = question.getDifficulty ().length ();
+	            questionDifficultyLabel.setGraphic (makeDifficultyRow (difficulty));
 	        } else {
-	            questionDifficultyLabel.setText ("");
+	            questionDifficultyLabel.setGraphic (null);
+	            //questionDifficultyLabel.setText ("");
 	        }
 	        questionContent.setText (question.getQuestion ());
 	        checkButton.setDisable (false);
@@ -311,6 +329,17 @@ public class AppWindow extends Application {
         historyLogger.log (question, null, answer, false);
         option.markAsError ();
         return false;
+	}
+	
+	private static Node makeDifficultyRow (int difficulty) {
+	    final HBox line = new HBox (4);
+	    
+	    for (int i = 0; i < 5; i++) {
+	        Image image = i < difficulty ? starIcon : emptyStarIcon;
+	        line.getChildren ().add (new ImageView (image));
+	    }
+	    
+	    return line;
 	}
 
 }
