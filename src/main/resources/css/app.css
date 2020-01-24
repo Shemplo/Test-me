@@ -1,0 +1,11 @@
+.bold {
+	-fx-font-weight: bold;
+}
+
+.bigger {
+	-fx-font-size: 12pt;
+}
+
+Button {
+	-fx-cursor: HAND;
+}

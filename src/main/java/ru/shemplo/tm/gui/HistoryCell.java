@@ -1,5 +1,7 @@
 package ru.shemplo.tm.gui;
 
+import java.util.List;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
@@ -36,6 +38,7 @@ public class HistoryCell extends ListCell <HistoryLogEntry> {
         final Question question = item.getQuestion ();
         Label questionHeader = new Label ("Question #" + question.getId () 
             + (question.getDifficulty () != null ? ", " + question.getDifficulty () : ""));
+        questionHeader.getStyleClass ().addAll (List.of ("bold", "bigger"));
         root.getChildren ().add (questionHeader);
         
         Label questionLabel = new Label (question.getQuestion ());

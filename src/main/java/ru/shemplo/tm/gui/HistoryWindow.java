@@ -40,6 +40,7 @@ public class HistoryWindow {
     
     private Parent createLayout () {
         final VBox mainContainer = new VBox (8);
+        mainContainer.getStylesheets ().add ("/css/history.css");
         mainContainer.setPadding (new Insets (8));
         
         final HistoryLogger historyLogger = parentWindow.getHistoryLogger ();

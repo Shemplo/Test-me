@@ -98,6 +98,7 @@ public class AppWindow extends Application {
 	
 	private Parent createLayout () {
 	    final VBox mainContainer = new VBox (8);
+	    mainContainer.getStylesheets ().add ("/css/app.css");
 	    mainContainer.setPadding (new Insets (8));
 	    mainContainer.setMinWidth (550);
 	    
@@ -106,6 +107,7 @@ public class AppWindow extends Application {
 	    mainContainer.getChildren ().add (headerLine);
 	    
 	    questionNameLabel = new Label ("Question #1");
+	    questionNameLabel.getStyleClass ().addAll (List.of ("bold", "bigger"));
 	    headerLine.getChildren ().add (questionNameLabel);
 	    
 	    final HBox wideBox = new HBox ();
