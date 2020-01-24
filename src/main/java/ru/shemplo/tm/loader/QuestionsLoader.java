@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import lombok.Getter;
 import ru.shemplo.tm.entity.Question;
 import ru.shemplo.tm.entity.QuestionAnswerType;
+import ru.shemplo.tm.entity.QuestionsOrder;
 
 public class QuestionsLoader {
     
@@ -28,6 +29,7 @@ public class QuestionsLoader {
     
     @Getter private List <Question> questions = List.of ();
     @Getter private String packName = "(default pack)";
+    @Getter private QuestionsOrder order;
     private boolean loaded = false;
     private int idGenerator = 0;
     
@@ -46,6 +48,19 @@ public class QuestionsLoader {
         
         if (packObject.has ("name")) {
             packName = packObject.getString ("name");
+        }
+        
+        order = QuestionsOrder.RANDOM;
+        if (packObject.has ("order")) {
+            String value = packObject.getString ("order").strip ().toUpperCase ();
+            try {
+                order = QuestionsOrder.valueOf (value);
+            } catch (IllegalArgumentException iae) {
+                System.out.println (String.format (
+                    "[WARNING] Unexpected `%s` order type", value
+                ));
+                // nothing to do except print warning
+            }
         }
         
         final JSONArray questionsArray = packObject.getJSONArray ("questions");

@@ -1,5 +1,6 @@
 {
     "name": "Java Quiz",
+    "order": "random",
     "questions": [
         {
             "question": "private int a;",

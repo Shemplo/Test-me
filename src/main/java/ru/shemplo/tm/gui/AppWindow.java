@@ -30,6 +30,7 @@ import ru.shemplo.tm.entity.AnswerNotExistsException;
 import ru.shemplo.tm.entity.HistoryLogger;
 import ru.shemplo.tm.entity.Question;
 import ru.shemplo.tm.entity.QuestionAnswerType;
+import ru.shemplo.tm.entity.QuestionsOrder;
 import ru.shemplo.tm.loader.QuestionsLoader;
 
 public class AppWindow extends Application {
@@ -183,12 +184,29 @@ public class AppWindow extends Application {
 	private double totalQuestions = 0, correctAnswers = 0;
 	
 	private void nextQuestion () {
-	    int r = questionIndex;
-	    do {	        
-	        r = random.nextInt (questionsLoader.getQuestionsNumber ());
-	    } while (uniquePool.contains (r));
+	    if (QuestionsOrder.RANDOM.equals (questionsLoader.getOrder ())) {	        
+	        int r = questionIndex;
+	        do {	        
+	            r = random.nextInt (questionsLoader.getQuestionsNumber ());
+	        } while (uniquePool.contains (r));
+	        
+	        questionIndex = r;
+	    } else if (QuestionsOrder.LINEAR.equals (questionsLoader.getOrder ())) {
+	        if (questionIndex < questionsLoader.getQuestionsNumber () - 1) {
+	            questionIndex++;
+	        } else {
+	            Platform.runLater (() -> {
+	                nextQuestionButton.setDisable (true);
+	            });
+	            
+	            return;
+	        }
+	    } else if (QuestionsOrder.LOOP.equals (questionsLoader.getOrder ())) {
+	        int mod = Math.max (questionsLoader.getQuestionsNumber (), 1);
+	        questionIndex = (questionIndex + 1) % mod;
+	    }
 	    
-	    Question question = questionsLoader.getQuestions ().get (questionIndex = r);
+	    Question question = questionsLoader.getQuestions ().get (questionIndex);
 	    
 	    uniqueQueue.add (questionIndex);
 	    uniquePool.add (questionIndex);
@@ -264,7 +282,12 @@ public class AppWindow extends Application {
                     (int) totalQuestions, (int) correctAnswers, 
                     (int) (correctAnswers / totalQuestions * 100)
                 ));
-                nextQuestionButton.setDisable (false);
+                if (!QuestionsOrder.LINEAR.equals (questionsLoader.getOrder ())
+                        || questionIndex + 1 < questionsLoader.getQuestionsNumber ()) {                    
+                    nextQuestionButton.setDisable (false);
+                } else {
+                    nextQuestionButton.setDisable (true);
+                }
                 checkButton.setDisable (true);
             });
         } catch (AnswerNotExistsException anee) {
