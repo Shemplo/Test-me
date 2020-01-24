@@ -270,6 +270,48 @@
             	"public class C implements A & B {...}"
             ],
             "answer": [0]
+        },
+        {
+        	"question": "Какой тип имеют ключи, по которым хранятся значения в HashMap?\nMap <String, Double> map = new HashMap <> ();",
+            "answer-type": "single",
+            "difficulty": "*",
+            "options": [
+            	"String",
+            	"Double",
+            	"Object",
+            	"Integer",
+            	"int",
+            	"Невозможно узнать"
+            ],
+            "answer": [0]
+        },
+        {
+        	"question": "Каким образом можно перевести строковое представление числа 12 в число типа `int`?",
+            "answer-type": "single",
+            "difficulty": "*",
+            "options": [
+            	"Integer.parseInt (\"12\");",
+            	"Number.parseInt (\"12\");",
+            	"(int) \"12\";",
+            	"String.toInteger (\"12\");",
+            	"Math.parseInteger (\"12\");",
+            	"+\"12\";"
+            ],
+            "answer": [0]
+        },
+        {
+        	"question": "Какой модификатор использован некорретно в примере?\npublic final class A {\n    public static synchronized Integer a = 62;\n}",
+            "answer-type": "single",
+            "difficulty": "**",
+            "options": [
+            	"synchronized",
+            	"`public` у класса",
+            	"`public` у поля",
+            	"`final` у класса",
+            	"`final` у поля",
+            	"static"
+            ],
+            "answer": [0]
         }
     ]
 }
