@@ -58,7 +58,7 @@
             "answer": [0]
         },
         {
-            "question": "Какое из предложенных действий возможно для кода ниже:\npublic class A {\n    public final String field = \"string value\";\n}",
+            "question": "Какое из предложенных действий возможно для кода ниже?\npublic class A {\n    public final String field = \"string value\";\n}",
             "answer-type": "SINGLE",
             "difficulty": "**",
             "options": [
@@ -98,7 +98,7 @@
             "question": "private A () {\n}",
             "answer-type": "SINGLE",
             "options": [
-                "Объявление приватного конструктора клсса `A`",
+                "Объявление приватного конструктора класс `A`",
                 "Объявление приватного метода `A`, возвращающего `void`",
                 "Объявление приватного метода `A`, возвращающего объект класса `A`",
                 "Некорректный код"
@@ -106,7 +106,7 @@
             "answer": [0]
         },
         {
-            "question": "Действия, которые класс выполняет по отношению к другим\nклассам и интерфейсам",
+            "question": "Как называются действия, которые класс выполняет по отношению к другим\nклассам и интерфейсам?",
             "answer-type": "SINGLE",
             "difficulty": "**",
             "options": [
@@ -151,6 +151,125 @@
             "options": [
             	"boolean\\s+int\\s+float",
             ]
+        },
+        {
+        	"question": "Чем может быть VALUE в коде, приведённом ниже?\nClassA.VALUE",
+            "answer-type": "single",
+            "difficulty": "**",
+            "options": [
+            	"Все предложенные верны",
+            	"Все предложенные варианты неверны",
+                "`VALUE` - публичное статическое поле класса `ClassA`",
+                "`VALUE` - значение перечисления (enum) `ClassA`",
+                "`VALUE` - поле, объявленное в интерфейсе `ClassA`"
+            ],
+            "answer": [0]
+        },
+        {
+        	"question": "Сколько существует модификаторов доступа (с учётом модификатора по умолчанию)?",
+            "answer-type": "pattern",
+            "difficulty": "**",
+            "options": [
+            	"4",
+            ],
+            "answer": [0]
+        },
+        {
+        	"question": "Какое ключевое слово создаёт объект класса?",
+            "answer-type": "single",
+            "difficulty": "*",
+            "options": [
+            	"new",
+            	"create",
+            	"instance",
+            	"initialize",
+            	"build",
+            	"assert"
+            ],
+            "answer": [0]
+        },
+        {
+        	"question": "Какие варианты импорта классов возможны внутри класса?",
+            "answer-type": "several",
+            "difficulty": "**",
+            "options": [
+            	"import ...",
+            	"import static ...",
+            	"import final ...",
+            	"import default ...",
+            	"import ... from ...",
+            	"import ... as ..."
+            ],
+            "answer": [0, 1]
+        },
+        {
+        	"question": "Какие модификаторы и возращаемый тип могут быть у метода `methodВ` при условии,\nчто `a` - переменная, объявленная не внутри класса родного типа?\nint c = a.methodB ();",
+            "answer-type": "several",
+            "difficulty": "*",
+            "options": [
+            	"public final int",
+            	"public int",
+            	"public static int",
+            	"public void",
+            	"public synchronized Integer",
+            	"private final int"
+            ],
+            "answer": [0, 1, 4]
+        },
+        {
+        	"question": "Какое значение будет выведено в консоль, если выполнить код?\nint a;\nSystem.out.println (a);",
+            "answer-type": "single",
+            "difficulty": "**",
+            "options": [
+            	"Некорректный код",
+            	"0",
+            	"null",
+            	"1",
+            	"Произвольное из диапазона int"
+            ],
+            "comment": "Перед использованием переменная обязана быть инициализирована",
+            "answer": [0]
+        },
+        {
+        	"question": "Где может быть объявлено поле класса?",
+            "answer-type": "several",
+            "difficulty": "*",
+            "options": [
+            	"В теле класса",
+            	"В теле метода",
+            	"В теле статической области",
+            	"В том же файле, что и класс, но не в теле класса",
+            	"В параметрах конструктора, если он единственный"
+            ],
+            "answer": [0]
+        },
+        {
+        	"question": "Какой из преведённых вариантов корректно объявляет публичный статический метод `methodA` с двумя аргументами типа `int`, и возвращающий `Object` в качестве результата?",
+            "answer-type": "several",
+            "difficulty": "**",
+            "options": [
+            	"public static Object methodA (int a, int b) {...}",
+            	"public Object static methodA (int a, int b) {...}",
+            	"public static <Object, int, int> methodA (a, b) {...}",
+            	"public static Object methodA = function (a, b) {...}",
+            	"static public Object methodA (int a, int b) {...}",
+            	"public static methodA (a : int, b : int) : Object {...}"
+            ],
+            "answer": [0, 4]
+        },
+        {
+        	"question": "Допустим, что `A`, `B` и `C` - классы. Какое выражение корректно?",
+            "answer-type": "single",
+            "difficulty": "**",
+            "options": [
+            	"public class A extends B {...}",
+            	"public class A extends B & C {...}",
+            	"public class A implements B, C {...}",
+            	"public class B implemens C {...}",
+            	"public class C extends A, B {...}",
+            	"public class C implements A & B {...}"
+            ],
+            "answer": [0]
         }
     ]
 }
