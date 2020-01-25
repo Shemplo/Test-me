@@ -12,6 +12,7 @@ File must match such format:
 ```json
 {
   "name": "name of this set of questions", //_optional
+  "order": "LINEAR|LOOP|RANDOM", //_optional,_RANDOM_by_default
   "questions": [
     ...
   ]
