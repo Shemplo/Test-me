@@ -36,7 +36,7 @@ import ru.shemplo.tm.loader.QuestionsLoader;
 public class AppWindow extends Application {
 
     public static final String STATISTICS_FORMAT = "Session: %d questions, %d correct (%d%%)";
-    public static final String TITLE_FORMAT = "Test me ( v0.0.1 ) | %s";
+    public static final String TITLE_FORMAT = "Test me ( v0.0.1 ) | %s ( %d questions )";
     
     private final MouseEvent fakeMouseEvent = new MouseEvent (
         MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, 
@@ -83,7 +83,8 @@ public class AppWindow extends Application {
 	    }
 	    
 	    stage.setTitle (String.format (TITLE_FORMAT, 
-            questionsLoader.getPackName ()));
+            questionsLoader.getPackName (),
+            questionsLoader.getQuestionsNumber ()));
 	    stage.setResizable (false);
 		stage.setScene (scene);
 		stage.sizeToScene ();

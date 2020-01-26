@@ -313,6 +313,78 @@
             	"static"
             ],
             "answer": [0]
-        }
+        },
+        {
+        	"question": "Какой тип имеет возвращаемое методом значение?\npublic static strictfp List <Runnable> prepareCalculations () {\n    ...\n}",
+        	"answer-type": "signle",
+        	"difficulty": "*",
+        	"options": [
+        		"List <Runnable>",
+        		"List",
+        		"Runnable",
+        		"Object",
+        		"strictfp",
+        		"strictfp List",
+        		"strictfp List <Runnable>",
+        	],
+        	"answer": [0]
+        },
+        {
+        	"question": "Выберите корректное объявление `main` метода программы:",
+        	"answer-type": "several",
+        	"difficulty": "**",
+        	"options": [
+        		"public static void main (String [] args) {}",
+        		"public static void main (String ... args) {}",
+        		"static void main (String [] args) {}",
+        		"public void main (String ... agrs) {}",
+        		"public static void Main (String ... args) {}",
+        		"public static int Main (String [] args) {}",
+        		"public void main (String args) {}"
+        	],
+        	"answer": [0, 1]
+        },
+        {
+        	"question": "Что обозначает выражение `присвоить значение`?",
+        	"answer-type": "single",
+        	"difficulty": "*",
+        	"options": [
+        		"Записать какое-то значение в подходящую переменную/поле",
+        		"Сделать какое-то значение уникальным для всей программы",
+        		"Получить результат вызова метода",
+        		"Сделать какое-то значение в переменной/поле неизменяемым",
+        	],
+        	"answer": [0]
+        },
+        {
+        	"question": "Что не является ключевым словом?",
+        	"answer-type": "several",
+        	"difficulty": "**",
+        	"options": [
+        		"of",
+        		"void",
+        		"public",
+        		"try",
+        		"while",
+        		"volatile"
+    		],
+        	"answer": [0]
+        },
+        {
+        	"question": "Какой логический оператор принимает истинное значение, только если ОБА выражения верны?",
+        	"answer-type": "single",
+        	"difficulty": "*",
+        	"options": [
+        		"&&",
+        		"||",
+        		"and",
+        		"or",
+        		"^",
+        		"&",
+        		"|"
+    		],
+    		"comment": "Оператор `&` является двоичным оператором",
+        	"answer": [0]
+    	}
     ]
 }
